@@ -1,0 +1,9 @@
+ping -c 3 192.168.56.101 
+PING 192.168.56.101 (192.168.56.101) 56(84) bytes of data.
+64 bytes from 192.168.56.101: icmp_seq=1 ttl=64 time=1.11 ms
+64 bytes from 192.168.56.101: icmp_seq=2 ttl=64 time=5.91 ms
+64 bytes from 192.168.56.101: icmp_seq=3 ttl=64 time=0.758 ms
+
+--- 192.168.56.101 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2127ms
+rtt min/avg/max/mdev = 0.758/2.592/5.907/2.348 ms
