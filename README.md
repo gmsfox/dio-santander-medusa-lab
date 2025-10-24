@@ -1,5 +1,5 @@
 # 🔐 Projeto: Auditoria de Força Bruta com Medusa & Hydra  
-**Autor:** Wevertton Bruno Bastos Felix  
+**Autor:** gmsfox
 **Data:** 24/10/2025  
 **Bootcamp Santander 2025 | DIO — Cibersegurança e Pentest Ético**
 
