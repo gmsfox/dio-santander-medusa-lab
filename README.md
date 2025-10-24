@@ -1,5 +1,5 @@
 # dio-santander-medusa-lab
-🔐 Projeto: Auditoria de Força Bruta com Medusa & Hydra
+<h1>🔐 Projeto: Auditoria de Força Bruta com Medusa & Hydra</h1>
 
 Bootcamp Santander 2025 | DIO — Cibersegurança e Pentest Ético
 
